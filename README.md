@@ -34,7 +34,21 @@ Each blink consists of 200ms ON and 100ms OFF. Each cycle runs totalBlinks × 2 
 
 When calibrating the sensors, the capacitive soil moisture sensors transmits a raw value of around 3600 when dry, and around 1600 when wet.
 
-This code was created in Arduino IDE, and was directly flashed onto the ESP32 from the IDE. I also may have had the help of AI in the creation of this code :)
+Connections:
+ - DHT22 → GPIO 25 (OUT)
+ - Soil Moisture Sensors → AOUT to GPIO 33, 32, 35, 34
+ - OLED → SDA to GPIO 21, SCL to GPIO 22 (I²C)
+ - Relays → IN1 (13), IN2 (14), IN3 (2), IN4 (18)
+ - LEDs → Green (19), Red (23), Orange (27), Rainbow (26)
+ - 5V 3A adapter → VIN and relay VCC (shared ground)
+
+Power and data flow summary:
+ - ESP32 powered by 5V adapter through VIN.
+ - Sensors powered by 3.3V (signal logic) and relays by 5V.
+ - Data flows from DHT22 + soil sensors → ESP32 → OLED + relays → receiver ESP32 via ESP-NOW.
+ - Sensor values displayed and transmitted every 10 seconds for irrigation automation and data logging.
+
+This program was written and uploaded via the Arduino IDE, using the following libraries: DHT, Adafruit_GFX, Adafruit_SSD1306, WiFi, and esp_now.
 
 //----------------------------------------------------------------
 
@@ -42,4 +56,15 @@ The Learning Farm ESP32 Node MCU IoT Data Collection (Data Receiver using ESP-NO
 
 This system does not have any peripherals, and is only connected to a 5V power source to function. It uses The Learning Farm's local WiFi channel, and directly transmits all data it collects to a cloud network (adafruit IO) I used the ESP-NOW protocol to transmit data to this receiver ESP32 from the sender ESP32, which then transmits the collected data to Adafruit IO cloud It sends the data from a DHT22 sensor and 4 capacitive soil moisture sensors from the other ESP32 system
 
-This code was created in Arduino IDE, and was directly flashed onto the ESP32 from the IDE.
+Connections:
+ - ESP32 NodeMCU powered by 5V via USB or external 5V adapter.
+ - zero sensors and peripherals (only board)
+ - Wi-Fi credentials and Adafruit IO keys configured in the code for automatic upload (not added in the code).
+
+Power and data flow summary:
+ - ESP32 NodeMCU powered by 5V (logic 3.3V internally).
+ - Data flows wirelessly from remote ESP32 sensor nodes → ESP32 NodeMCU (via ESP-NOW) → Wi-Fi → Adafruit IO.
+ - Receives temperature, humidity, and four soil moisture readings from multiple field nodes.
+ - The ESP32 prints received values via serial monitor and uploads them to corresponding Adafruit IO feeds.
+
+This program was written and uploaded via the Arduino IDE, using libraries for each module (WiFi, esp_now, AdafruitIO_WiFi).
