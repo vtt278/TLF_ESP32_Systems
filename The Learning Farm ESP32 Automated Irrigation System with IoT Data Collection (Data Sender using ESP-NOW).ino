@@ -1,5 +1,5 @@
 //----------------------------------------------------------------
-// The Learning Farm ESP32 Automated Irrigation System with IoT Data Collection (Data Sender using ESP-NOW)
+// The Learning Farm ESP32 Automated Irrigation System v2.0 with IoT Data Collection (Initial Prototype, Data Sender using ESP-NOW)
 //
 // Vincent Tjoa, July 3, 2025
 
