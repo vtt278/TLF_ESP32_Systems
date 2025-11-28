@@ -2,6 +2,7 @@
 // The Learning Farm ESP32 Node MCU IoT Data Collection (Data Receiver using ESP-NOW)
 //
 // Vincent Tjoa, July 3, 2025
+// NodeMCU_esp32devmodule_espnow_receiver
 
 #include <AdafruitIO_WiFi.h>
 #include <WiFi.h>
@@ -17,7 +18,7 @@
 
 AdafruitIO_WiFi io(IO_USERNAME, IO_KEY, WIFI_SSID, WIFI_PASS);
 
-// === Define Adafruit IO Feeds ===
+// Define Adafruit IO Feeds
 AdafruitIO_Feed *temperature_feed = io.feed("DHT22 Temperature");
 AdafruitIO_Feed *humidity_feed = io.feed("DHT22 Humidity");
 AdafruitIO_Feed *moisture1_feed = io.feed("Soil Moisture 1");
@@ -25,7 +26,7 @@ AdafruitIO_Feed *moisture2_feed = io.feed("Soil Moisture 2");
 AdafruitIO_Feed *moisture3_feed = io.feed("Soil Moisture 3");
 AdafruitIO_Feed *moisture4_feed = io.feed("Soil Moisture 4");
 
-// === Data Structure must match sender ===
+// Data Structure must match sender
 typedef struct struct_message {
   float temperature;
   float humidity;
@@ -39,7 +40,7 @@ typedef struct struct_message {
 struct_message incomingData;
 
 
-// === Callback: runs every time data is received ===
+// Callback: runs every time data is received
 void OnDataRecv(const esp_now_recv_info_t *recvInfo, const uint8_t *data, int len) {
   char macStr[18];
   snprintf(macStr, sizeof(macStr),
@@ -63,7 +64,7 @@ void OnDataRecv(const esp_now_recv_info_t *recvInfo, const uint8_t *data, int le
     Serial.printf("  Moisture 4  : %d %%\n", incomingData.moisture4);
     Serial.println();
 
-    // === Send data to Adafruit IO ===
+    // Send data to Adafruit IO 
     temperature_feed->save(incomingData.temperature);
     humidity_feed->save(incomingData.humidity);
     moisture1_feed->save(incomingData.moisture1);
@@ -116,7 +117,7 @@ void loop() {
   io.run();  // Keep Adafruit IO connection alive
  
   /*Serial.println("test");
-  Serial.println(WiFi.channel()); //to check the WiFi channel the system is present in
+  Serial.println(WiFi.channel());
   delay(5000);
   */
 }
