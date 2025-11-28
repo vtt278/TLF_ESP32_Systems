@@ -16,7 +16,7 @@ This repository possesses the code required to operate these systems.
 
 //----------------------------------------------------------------
 
-The Learning Farm ESP32 Automated Irrigation System with IoT Data Collection (Data Sender using ESP-NOW) notes:
+The Learning Farm ESP32 Automated Irrigation System v2.0 with IoT Data Collection (Data Sender using ESP-NOW) notes:
 
 This system uses 5V relays instead of MOSFETs for 12V DC Water pump and 12V DC Solenoid valve control Operation: Uses a 5V 3A AC-to-DC adapter for the ESP32 and 5V relay system, and a 12V 15A AC-to-DC adapter for the water pump and solenoid valves
 
