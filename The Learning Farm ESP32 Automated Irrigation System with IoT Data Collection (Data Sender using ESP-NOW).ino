@@ -2,6 +2,7 @@
 // The Learning Farm ESP32 Automated Irrigation System v2.0 with IoT Data Collection (Initial Prototype, Data Sender using ESP-NOW)
 //
 // Vincent Tjoa, July 3, 2025
+// TLF_PROTOTYPE_ESP32_RELAY_SENSORS
 
 #include <DHT.h>
 #include <DHT_U.h>
@@ -13,45 +14,43 @@
 #include <esp_now.h>
 #include <esp_wifi.h>
 
-// === Relay Setup ===
-//Connect 5V 3A adapter's positive terminal to ESP32's VIN pin and relay DC+ terminal, and share adapter, ESP32, and relay grounds
-#define RELAY_IN1 13 //Connect relay's IN1 pin/terminal to ESP32 GPIO 13/D13 pin
-#define RELAY_IN2 14 //Connect relay's IN2 pin/terminal to GPIO 14/D14 pin
-#define RELAY_IN3 2 //Connect relay's IN3 pin/terminal to GPIO 2/D2 pin
-#define RELAY_IN4 18 //Connect relay's IN4 pin/terminal to GPIO 18/D18 pin
+// Relay Setup
+#define RELAY_IN1 13
+#define RELAY_IN2 14
+#define RELAY_IN3 2
+#define RELAY_IN4 18
 
-// === DHT22 Setup ===
-#define DHTPIN 25 //Connect DHT22 Module's OUT pin to ESP32 GPIO 25/D25 pin
+// DHT22 Setup
+#define DHTPIN 25
 #define DHTTYPE DHT22
 DHT dht(DHTPIN, DHTTYPE);
 
-// === LED Pins ===
-const int ledGreen = 19; //Connect LED's anode to ESP32 GPIO 19/D19 pin, then connect <500Ω resistor from LED's cathode to ESP32 GND
-const int ledRed = 23; //Connect LED's anode to ESP32 GPIO 23/D23 pin, then connect <500Ω resistor from LED's cathode to ESP32 GND
-const int ledOrange = 27; //Connect LED's anode to ESP32 GPIO 27/D27 pin, then connect <500Ω resistor from LED's cathode to ESP32 GND
-const int ledRainbow = 26; //Connect LED's anode to ESP32 GPIO 26/D26 pin, then connect <500Ω resistor from LED's cathode to ESP32 GND
+// LED Pins
+const int ledGreen = 19;
+const int ledRed = 23;
+const int ledOrange = 27;
+const int ledRainbow = 26;
 
-// === Soil Moisture Setup ===
-const int moisture_pin1 = 33; //Connect capacitive soil moisture sensor's AOUT pin to ESP32 GPIO 33/D33 pin
-const int moisture_pin2 = 32; //Connect capacitive soil moisture sensor's AOUT pin to ESP32 GPIO 32/D32 pin
-const int moisture_pin3 = 35; //Connect capacitive soil moisture sensor's AOUT pin to ESP32 GPIO 35/D35 pin
-const int moisture_pin4 = 34; //Connect capacitive soil moisture sensor's AOUT pin to ESP32 GPIO 34/D34 pin
+// Soil Moisture Setup
+const int moisture_pin1 = 33;
+const int moisture_pin2 = 32;
+const int moisture_pin3 = 35;
+const int moisture_pin4 = 34;
 int moisture_raw1 = 0, moisture_raw2 = 0, moisture_raw3 = 0, moisture_raw4 = 0;
 int moisture_percent1 = 0, moisture_percent2 = 0, moisture_percent3 = 0, moisture_percent4 = 0;
 
-// === OLED Setup ===
-//Connect OLED's SCL and SDA pins to ESP32 GPIO 22/D22 pin and GPIO 21/D21 pin respectively
+// OLED Setup
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
 #define OLED_RESET -1
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
-// === ESP-NOW Setup ===
+// ESP-NOW Setup
 uint8_t receiverMac[] = {0xCC, 0xDB, 0xA7, 0x9D, 0x77, 0xAC};
 esp_now_peer_info_t peerInfo;
 
 typedef struct struct_message {
-  float temperature; 
+  float temperature;
   float humidity;
   int moisture1;
   int moisture2;
@@ -92,13 +91,13 @@ void initESPNow() {
   }
 }
 
-// === Moisture Mapping Function ===
+// Moisture Mapping Function
 int mapMoisture(int raw) {
   int percent = ((3600 - raw) / (3600.0 - 1600.0)) * 100;
   return constrain(percent, 0, 100);
 }
 
-// === LED Blink Struct ===
+// LED Blink Struct
 struct BlinkState {
   unsigned long previousMillis = 0;
   int blinkCount = 0;
@@ -180,22 +179,22 @@ void setup() {
   delay(1000);
   display.clearDisplay();
 
-  initESPNow(); //Initialize ESP-NOW protocol
+  initESPNow();
 }
 
 void loop() {
   float dhtTemp = dht.readTemperature();
   float humidity = dht.readHumidity();
 
-  moisture_raw1 = analogRead(moisture_pin1); //reads analog value (ADC) from capacitive soil moisture sensor 1
-  moisture_raw2 = analogRead(moisture_pin2); //reads analog value (ADC) from capacitive soil moisture sensor 2
-  moisture_raw3 = analogRead(moisture_pin3); //reads analog value (ADC) from capacitive soil moisture sensor 3
-  moisture_raw4 = analogRead(moisture_pin4); //reads analog value (ADC) from capacitive soil moisture sensor 4
+  moisture_raw1 = analogRead(moisture_pin1);
+  moisture_raw2 = analogRead(moisture_pin2);
+  moisture_raw3 = analogRead(moisture_pin3);
+  moisture_raw4 = analogRead(moisture_pin4);
 
-  moisture_percent1 = mapMoisture(moisture_raw1); //calls the mapMoisture function to read soil moisture percentage from capacitive soil moisture sensor 1
-  moisture_percent2 = mapMoisture(moisture_raw2); //calls the mapMoisture function to read soil moisture percentage from capacitive soil moisture sensor 2
-  moisture_percent3 = mapMoisture(moisture_raw3); //calls the mapMoisture function to read soil moisture percentage from capacitive soil moisture sensor 3
-  moisture_percent4 = mapMoisture(moisture_raw4); //calls the mapMoisture function to read soil moisture percentage from capacitive soil moisture sensor 4
+  moisture_percent1 = mapMoisture(moisture_raw1);
+  moisture_percent2 = mapMoisture(moisture_raw2);
+  moisture_percent3 = mapMoisture(moisture_raw3);
+  moisture_percent4 = mapMoisture(moisture_raw4);
 
   Serial.printf("\nTemp: %.1f C, Humidity: %.1f %%\n", dhtTemp, humidity);
   Serial.printf("Moisture 1: %d %% (raw %d)\n", moisture_percent1, moisture_raw1);
@@ -247,13 +246,13 @@ void loop() {
   // Relay IN4 not used or set to OFF
   digitalWrite(RELAY_IN4, HIGH);// Relay logic (active-low)
 
-  // === Send Data via ESP-NOW ===
-  sensorData.temperature = dhtTemp; //sends temperature reading to receiver ESP32
-  sensorData.humidity = humidity; //sends humidity reading to receiver ESP32
-  sensorData.moisture1 = moisture_percent1; //sends capacitive soil moisture sensor 1 reading to receiver ESP32
-  sensorData.moisture2 = moisture_percent2; //sends capacitive soil moisture sensor 2 reading to receiver ESP32
-  sensorData.moisture3 = moisture_percent3; //sends capacitive soil moisture sensor 3 reading to receiver ESP32
-  sensorData.moisture4 = moisture_percent4; //sends capacitive soil moisture sensor 4 reading to receiver ESP32
+  // Send Data via ESP-NOW
+  sensorData.temperature = dhtTemp;
+  sensorData.humidity = humidity;
+  sensorData.moisture1 = moisture_percent1;
+  sensorData.moisture2 = moisture_percent2;
+  sensorData.moisture3 = moisture_percent3;
+  sensorData.moisture4 = moisture_percent4;
 
   esp_err_t result = esp_now_send(receiverMac, (uint8_t *)&sensorData, sizeof(sensorData));
   if (result == ESP_OK) {
@@ -267,8 +266,6 @@ void loop() {
 }
 
 /*
-  //For manual calibration of soil moisture wet & dry values, switch this with the "moisture_percentx = mapMoisture(moisture_rawx);"" functions
-
   moisture_raw1 = analogRead(moisture_pin1);
   // Updated mapping for soil_moisture_1: 1550 (wet) -> 100%, 3700 (dry) -> 0%
   moisture_percent1 = ((3600 - moisture_raw1) / (3600.0 - 1600.0)) * 100;
