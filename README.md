@@ -3,7 +3,7 @@ AgriSync.ID C++ code on Arduino IDE for my ESP32-based Automated Irrigation Syst
 
 Start Date: February 2025
 
-End Date: ongoing
+End Date: July 2026
 
 Location: The Learning Farm (TLF), Kawungluwuk Village, Sukaresmi, Cianjur Regency, West Java, Indonesia
 
